@@ -8,7 +8,7 @@ set -e
 # https://artic.network/ncov-2019/ncov2019-bioinformatics-sop.html
 # Version 0.0.1
 # Written by George Githinji
-# License GNU
+# License GNU General Public License v3.0
 #########################################
 
 USAGE="USAGE $0 -f sample_manifest_file.csv -r run_name -i input_fastq_files -p path/to/primer/scheme -n normalisation -t threads -k bam"
