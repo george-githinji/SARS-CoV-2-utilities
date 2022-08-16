@@ -27,6 +27,7 @@ NORMALISE_VALUE=200                                # default normalisation value
 MIN_LENGTH=300                                     # default minimum amplicon length
 MAX_LENGTH=750                                     # default maximum amplicon length
 KEEP=""
+THREADS=1
 
 intermediate_files=("*.vcf"  "*.gz" "*.tbi" "*.txt" "*.er" "*.depths" "*.muscle.*" "*.preconsensus.*" "*.bam" "*.bai" "*.hdf")
 intermediate_files_less_bam=("*.vcf"  "*.gz" "*.tbi" "*.txt" "*.er" "*.depths" "*.muscle.*" "*.preconsensus.*" "*.hdf")
@@ -61,7 +62,7 @@ do
 done
 
 # enforce "run name", "sample manifest file path", "fastq directory path, and number of threads command option are provided by the user
-if [[ $RUN_NAME == "" || $SAMPLE_NAMES == "" || $FASTQ_FILES == "" || $THREADS == "" ]]; then
+if [[ $RUN_NAME == "" || $SAMPLE_NAMES == "" || $FASTQ_FILES == "" ]]; then
     echo $USAGE
     exit 0
 fi
@@ -108,10 +109,15 @@ do
 
 done <$SAMPLE_NAMES
 
-cat *.consensus.fasta >"$RUN_NAME.fasta"
+echo "Copying all the consensus files ... to $RUN_NAME.fasta"
 
-echo "Done!"
-
-conda deactivate
+# copy all the consensus files into a single file.
+aggregate_consensus_files(){
+    cat *.consensus.fasta >"$RUN_NAME.fasta"
+}
+if ! aggregate_consensus_files; then
+    echo "Aggregating consensus files failed, missing consensus files."
+fi
 
 echo "Deactivating artic workflow....."
+conda deactivate
